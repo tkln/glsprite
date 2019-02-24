@@ -7,6 +7,8 @@
 
 #include "glutil.h"
 
+#define ARRAY_LEN(a) (sizeof(a) / sizeof(a[0]))
+
 struct vec3 {
     float x, y, z;
 };
@@ -16,6 +18,21 @@ static const struct vec3 quad_verts[] = {
     {  1.0f, -1.0f, 0.0f },
     { -1.0f,  1.0f, 0.0f },
     {  1.0f,  1.0f, 0.0f },
+};
+
+struct vec2 {
+    float x, y;
+};
+
+static const struct vec2 sprite_positions[] = {
+    { 0.25, -0.25 },
+    { -0.5, 0.35 },
+    { 0.75, 0.55 },
+};
+
+enum {
+    VA_IDX_QUAD_VERT,
+    VA_IDX_SPRITE_POS,
 };
 
 int main(void)
@@ -29,7 +46,8 @@ int main(void)
     GLuint vs_id;
     GLuint prog_id;
     GLuint vao_id;
-    GLuint vbo_id;
+    GLuint quad_verts_vbo_id;
+    GLuint sprite_pos_vbo_id;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -58,22 +76,32 @@ int main(void)
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
 
-    glGenBuffers(1, &vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_verts), quad_verts, GL_STATIC_DRAW);
+    glGenBuffers(1, &quad_verts_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, quad_verts_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_verts), quad_verts,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_QUAD_VERT, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glGenBuffers(1, &sprite_pos_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, sprite_pos_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_positions), sprite_positions,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_POS, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glEnableVertexAttribArray(0);
+    glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
+    glVertexAttribDivisor(VA_IDX_SPRITE_POS, 1);
+
+    glEnableVertexAttribArray(VA_IDX_QUAD_VERT);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_POS);
+
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
 
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                     sizeof(quad_verts) / sizeof(quad_verts[0]));
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, ARRAY_LEN(quad_verts),
+                              ARRAY_LEN(sprite_positions));
 
         SDL_GL_SwapWindow(win);
         SDL_Delay(16);
