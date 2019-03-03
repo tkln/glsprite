@@ -48,6 +48,7 @@ int main(void)
     GLuint vao_id;
     GLuint quad_verts_vbo_id;
     GLuint sprite_pos_vbo_id;
+    GLint screen_size_uniform_loc;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -73,6 +74,9 @@ int main(void)
     prog_id = glutil_link_shaders(glCreateProgram(), fs_id, vs_id);
     assert(prog_id);
 
+    screen_size_uniform_loc = glGetUniformLocation(prog_id, "screen_size");
+    assert(screen_size_uniform_loc != -1);
+
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
 
@@ -96,6 +100,7 @@ int main(void)
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
+    glUniform2f(screen_size_uniform_loc, 640, 480);
 
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
