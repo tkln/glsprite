@@ -25,9 +25,9 @@ struct vec2 {
 };
 
 static const struct vec2 sprite_positions[] = {
-    { 0.25, -0.25 },
-    { -0.5, 0.35 },
-    { 0.75, 0.55 },
+    { 100, 100 },
+    { 500, 300 },
+    { 300, 400 },
 };
 
 enum {

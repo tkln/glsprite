@@ -10,6 +10,7 @@ void main() {
     float aspect_ratio = screen_size.x / screen_size.y;
 
     gl_Position = vec4(quad_vert_pos.xy * vec2(1, aspect_ratio) * scale +
-                       sprite_pos, quad_vert_pos.z, 1.0f);
+                       sprite_pos / (screen_size * 0.5f) - 1.0f,
+                       quad_vert_pos.z, 1.0f);
 }
 
