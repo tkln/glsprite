@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -7,7 +8,12 @@
 
 #include "glutil.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
+
 #define ARRAY_LEN(a) (sizeof(a) / sizeof(a[0]))
+#define DEG2RAD(deg) (((deg) / 180.0f) * M_PI)
 
 struct vec3 {
     float x, y, z;
@@ -38,10 +44,18 @@ static const struct vec2 sprite_sizes[] = {
     { 128, 64 },
 };
 
+static const float sprite_angles[] = {
+    0.1f,
+    0.0f,
+    DEG2RAD(45.0f),
+    DEG2RAD(45.0f),
+};
+
 enum {
     VA_IDX_QUAD_VERT,
     VA_IDX_SPRITE_POS,
     VA_IDX_SPRITE_SIZE,
+    VA_IDX_SPRITE_ROT,
 };
 
 int main(void)
@@ -58,6 +72,7 @@ int main(void)
     GLuint quad_verts_vbo_id;
     GLuint sprite_pos_vbo_id;
     GLuint sprite_size_vbo_id;
+    GLuint sprite_rot_vbo_id;
     GLint screen_size_uniform_loc;
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -108,13 +123,21 @@ int main(void)
                  GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SPRITE_SIZE, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    glGenBuffers(1, &sprite_rot_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, sprite_rot_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_angles), sprite_angles,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_ROT, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
     glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
     glVertexAttribDivisor(VA_IDX_SPRITE_POS, 1);
     glVertexAttribDivisor(VA_IDX_SPRITE_SIZE, 1);
+    glVertexAttribDivisor(VA_IDX_SPRITE_ROT, 1);
 
     glEnableVertexAttribArray(VA_IDX_QUAD_VERT);
     glEnableVertexAttribArray(VA_IDX_SPRITE_POS);
     glEnableVertexAttribArray(VA_IDX_SPRITE_SIZE);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_ROT);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
