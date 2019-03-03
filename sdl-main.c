@@ -28,11 +28,20 @@ static const struct vec2 sprite_positions[] = {
     { 100, 100 },
     { 500, 300 },
     { 300, 400 },
+    { 200, 200 },
+};
+
+static const struct vec2 sprite_sizes[] = {
+    { 32, 32 },
+    { 64, 64 },
+    { 128, 128 },
+    { 128, 64 },
 };
 
 enum {
     VA_IDX_QUAD_VERT,
     VA_IDX_SPRITE_POS,
+    VA_IDX_SPRITE_SIZE,
 };
 
 int main(void)
@@ -48,6 +57,7 @@ int main(void)
     GLuint vao_id;
     GLuint quad_verts_vbo_id;
     GLuint sprite_pos_vbo_id;
+    GLuint sprite_size_vbo_id;
     GLint screen_size_uniform_loc;
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -92,11 +102,19 @@ int main(void)
                  GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SPRITE_POS, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    glGenBuffers(1, &sprite_size_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, sprite_size_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_sizes), sprite_sizes,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_SIZE, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
     glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
     glVertexAttribDivisor(VA_IDX_SPRITE_POS, 1);
+    glVertexAttribDivisor(VA_IDX_SPRITE_SIZE, 1);
 
     glEnableVertexAttribArray(VA_IDX_QUAD_VERT);
     glEnableVertexAttribArray(VA_IDX_SPRITE_POS);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_SIZE);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
