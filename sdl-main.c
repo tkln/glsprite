@@ -48,7 +48,7 @@ static const struct vec2 sprite_sizes[] = {
 static const float sprite_angles[] = {
     0.1f,
     0.0f,
-    DEG2RAD(45.0f),
+    DEG2RAD(15.0f),
     DEG2RAD(45.0f),
 };
 
@@ -75,6 +75,10 @@ int main(void)
     GLuint sprite_size_vbo_id;
     GLuint sprite_rot_vbo_id;
     GLint screen_size_uniform_loc;
+    GLuint sprite_sheet_tex_id;
+
+    int sprite_sheet_w, sprite_sheet_h, sprite_sheet_num_channels;
+    unsigned char *sprite_sheet_data;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -92,6 +96,16 @@ int main(void)
     glewInit();
 
     SDL_GL_SetSwapInterval(1);
+
+    sprite_sheet_data = stbi_load("spritesheet.png", &sprite_sheet_w,
+                                  &sprite_sheet_h, &sprite_sheet_num_channels,
+                                  0);
+
+    glGenTextures(1, &sprite_sheet_tex_id);
+    glBindTexture(GL_TEXTURE_2D, sprite_sheet_tex_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite_sheet_w, sprite_sheet_h, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, sprite_sheet_data);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     fs_id = glutil_compile_shader_file("fs.glsl", GL_FRAGMENT_SHADER);
     assert(fs_id);

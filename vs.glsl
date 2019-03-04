@@ -7,6 +7,10 @@ layout(location = 1) in vec2 sprite_pos;
 layout(location = 2) in vec2 sprite_size;
 layout(location = 3) in float sprite_rot;
 
+flat out vec2 fs_sprite_pos;
+flat out vec2 fs_sprite_size;
+flat out float fs_sprite_rot;
+
 void main() {
     mat2 rot = mat2(cos(sprite_rot), sin(sprite_rot),
                     -sin(sprite_rot), cos(sprite_rot));
@@ -14,5 +18,8 @@ void main() {
     vec2 sp = sprite_pos / (screen_size * 0.5f) - 1.0f;
 
     gl_Position = vec4(qvp + sp, quad_vert_pos.z, 1.0f);
+    fs_sprite_pos = sprite_pos;
+    fs_sprite_size = sprite_size;
+    fs_sprite_rot = sprite_rot;
 }
 
