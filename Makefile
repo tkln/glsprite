@@ -1,7 +1,10 @@
 LDFLAGS = -lSDL2 -lGL -lGLEW -lm
 CFLAGS = -Wall -g -O2
-sdl-main: sdl-main.c glutil.c stb_image.c
+
+OBJS = sdl-main.o glutil.o stb_image.o
+
+sdl-main: $(OBJS)
 
 .PHONY: clean
 clean:
-	rm -f sdl-main
+	rm -f sdl-main $(OBJS)
