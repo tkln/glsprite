@@ -17,5 +17,5 @@ void main() {
     vec2 sp = sprite_pos / (screen_size * 0.5f) - 1.0f;
 
     gl_Position = vec4(qvp + sp, quad_vert_pos.z, 1.0f);
-    tex_coords = quad_vert_pos.xy * sprite_size / (sheet_size * 2);
+    tex_coords = (quad_vert_pos.xy + 1.0) * sprite_size / (sheet_size * 2);
 }
