@@ -97,6 +97,7 @@ int main(void)
 
     SDL_GL_SetSwapInterval(1);
 
+    stbi_set_flip_vertically_on_load(true);
     sprite_sheet_data = stbi_load("spritesheet.png", &sprite_sheet_w,
                                   &sprite_sheet_h, &sprite_sheet_num_channels,
                                   0);
