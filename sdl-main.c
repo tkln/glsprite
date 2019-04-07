@@ -75,6 +75,7 @@ int main(void)
     GLuint sprite_size_vbo_id;
     GLuint sprite_rot_vbo_id;
     GLint screen_size_uniform_loc;
+    GLint sheet_size_uniform_loc;
     GLuint sprite_sheet_tex_id;
 
     int sprite_sheet_w, sprite_sheet_h, sprite_sheet_num_channels;
@@ -120,6 +121,9 @@ int main(void)
     screen_size_uniform_loc = glGetUniformLocation(prog_id, "screen_size");
     assert(screen_size_uniform_loc != -1);
 
+    sheet_size_uniform_loc = glGetUniformLocation(prog_id, "sheet_size");
+    assert(sheet_size_uniform_loc != -1);
+
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
 
@@ -160,6 +164,7 @@ int main(void)
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
     glUniform2f(screen_size_uniform_loc, 640, 480);
+    glUniform2f(sheet_size_uniform_loc, sprite_sheet_w, sprite_sheet_h);
 
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
