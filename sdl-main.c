@@ -39,10 +39,10 @@ static const struct vec2 sprite_positions[] = {
 };
 
 static const struct vec2 sprite_sizes[] = {
-    { 32, 32 },
-    { 64, 64 },
-    { 128, 128 },
-    { 128, 64 },
+    { 21, 21 },
+    { 21, 21 },
+    { 21, 21 },
+    { 21, 21 },
 };
 
 static const float sprite_angles[] = {
