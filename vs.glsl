@@ -20,6 +20,7 @@ void main() {
     vec2 sp = sprite_pos / (screen_size * 0.5f) - 1.0f;
 
     gl_Position = vec4(qvp + sp, quad_vert_pos.z, 1.0f);
+    gl_Position.y *= -1.0f;
 
     tex_coords = (sprite_size * (quad_vert_pos.xy * 0.5 + 0.5) + sheet_offset) /
                  sheet_size;
