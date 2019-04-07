@@ -59,12 +59,20 @@ static const struct vec2 sheet_offsets[] = {
     { 2, 2 },
 };
 
+static const struct vec2 sprite_origins[] = {
+    { 10, 10 },
+    { 10, 10 },
+    { 10, 10 },
+    { 10, 10 },
+};
+
 enum {
     VA_IDX_QUAD_VERT,
     VA_IDX_SPRITE_POS,
     VA_IDX_SPRITE_SIZE,
     VA_IDX_SPRITE_ROT,
     VA_IDX_SHEET_OFFSET,
+    VA_IDX_SPRITE_ORIGIN,
 };
 
 int main(void)
@@ -83,6 +91,7 @@ int main(void)
     GLuint sprite_size_vbo_id;
     GLuint sprite_rot_vbo_id;
     GLuint sheet_offset_vbo_id;
+    GLuint sprite_origin_vbo_id;
     GLint screen_size_uniform_loc;
     GLint sheet_size_uniform_loc;
     GLuint sprite_sheet_tex_id;
@@ -166,17 +175,25 @@ int main(void)
                  GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SHEET_OFFSET, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    glGenBuffers(1, &sprite_origin_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, sprite_origin_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_origins), sprite_origins,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_ORIGIN, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
     glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
     glVertexAttribDivisor(VA_IDX_SPRITE_POS, 1);
     glVertexAttribDivisor(VA_IDX_SPRITE_SIZE, 1);
     glVertexAttribDivisor(VA_IDX_SPRITE_ROT, 1);
     glVertexAttribDivisor(VA_IDX_SHEET_OFFSET, 1);
+    glVertexAttribDivisor(VA_IDX_SPRITE_ORIGIN, 1);
 
     glEnableVertexAttribArray(VA_IDX_QUAD_VERT);
     glEnableVertexAttribArray(VA_IDX_SPRITE_POS);
     glEnableVertexAttribArray(VA_IDX_SPRITE_SIZE);
     glEnableVertexAttribArray(VA_IDX_SPRITE_ROT);
     glEnableVertexAttribArray(VA_IDX_SHEET_OFFSET);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_ORIGIN);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
