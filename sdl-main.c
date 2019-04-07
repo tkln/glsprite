@@ -106,6 +106,8 @@ int main(void)
     glBindTexture(GL_TEXTURE_2D, sprite_sheet_tex_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite_sheet_w, sprite_sheet_h, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, sprite_sheet_data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     fs_id = glutil_compile_shader_file("fs.glsl", GL_FRAGMENT_SHADER);
