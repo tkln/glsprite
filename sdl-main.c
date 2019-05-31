@@ -75,15 +75,7 @@ enum {
     VA_IDX_SPRITE_ORIGIN,
 };
 
-int main(void)
-{
-    SDL_Window *win;
-    SDL_GLContext gl_ctx;
-    SDL_Event ev;
-    bool running = true;
-
-    GLuint fs_id;
-    GLuint vs_id;
+struct glsprite_renderer {
     GLuint prog_id;
     GLuint vao_id;
     GLuint quad_verts_vbo_id;
@@ -94,10 +86,90 @@ int main(void)
     GLuint sprite_origin_vbo_id;
     GLint screen_size_uniform_loc;
     GLint sheet_size_uniform_loc;
-    GLuint sprite_sheet_tex_id;
+};
+
+int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id)
+{
+    r->screen_size_uniform_loc = glGetUniformLocation(prog_id, "screen_size");
+    if (r->screen_size_uniform_loc < 0)
+        return -1;
+
+    r->sheet_size_uniform_loc = glGetUniformLocation(prog_id, "sheet_size");
+    if (r->sheet_size_uniform_loc < 0)
+        return -1;
+
+    glGenVertexArrays(1, &r->vao_id);
+    glBindVertexArray(r->vao_id);
+
+    glGenBuffers(1, &r->quad_verts_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, r->quad_verts_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_verts), quad_verts,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_QUAD_VERT, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &r->sprite_pos_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, r->sprite_pos_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_positions), sprite_positions,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_POS, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &r->sprite_size_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, r->sprite_size_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_sizes), sprite_sizes,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_SIZE, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &r->sprite_rot_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, r->sprite_rot_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_angles), sprite_angles,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_ROT, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &r->sheet_offset_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, r->sheet_offset_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sheet_offsets), sheet_offsets,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SHEET_OFFSET, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &r->sprite_origin_vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, r->sprite_origin_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_origins), sprite_origins,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(VA_IDX_SPRITE_ORIGIN, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
+    glVertexAttribDivisor(VA_IDX_SPRITE_POS, 1);
+    glVertexAttribDivisor(VA_IDX_SPRITE_SIZE, 1);
+    glVertexAttribDivisor(VA_IDX_SPRITE_ROT, 1);
+    glVertexAttribDivisor(VA_IDX_SHEET_OFFSET, 1);
+    glVertexAttribDivisor(VA_IDX_SPRITE_ORIGIN, 1);
+
+    glEnableVertexAttribArray(VA_IDX_QUAD_VERT);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_POS);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_SIZE);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_ROT);
+    glEnableVertexAttribArray(VA_IDX_SHEET_OFFSET);
+    glEnableVertexAttribArray(VA_IDX_SPRITE_ORIGIN);
+
+    return 0;
+}
+
+int main(void)
+{
+    SDL_Window *win;
+    SDL_GLContext gl_ctx;
+    SDL_Event ev;
+    bool running = true;
+
+    struct glsprite_renderer renderer;
 
     int sprite_sheet_w, sprite_sheet_h, sprite_sheet_num_channels;
     unsigned char *sprite_sheet_data;
+    int err;
+
+    GLuint fs_id;
+    GLuint vs_id;
+    GLuint prog_id;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -120,6 +192,8 @@ int main(void)
                                   &sprite_sheet_h, &sprite_sheet_num_channels,
                                   0);
 
+    GLuint sprite_sheet_tex_id;
+
     glGenTextures(1, &sprite_sheet_tex_id);
     glBindTexture(GL_TEXTURE_2D, sprite_sheet_tex_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite_sheet_w, sprite_sheet_h, 0,
@@ -135,69 +209,14 @@ int main(void)
     prog_id = glutil_link_shaders(glCreateProgram(), fs_id, vs_id);
     assert(prog_id);
 
-    screen_size_uniform_loc = glGetUniformLocation(prog_id, "screen_size");
-    assert(screen_size_uniform_loc != -1);
-
-    sheet_size_uniform_loc = glGetUniformLocation(prog_id, "sheet_size");
-    assert(sheet_size_uniform_loc != -1);
-
-    glGenVertexArrays(1, &vao_id);
-    glBindVertexArray(vao_id);
-
-    glGenBuffers(1, &quad_verts_vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, quad_verts_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_verts), quad_verts,
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(VA_IDX_QUAD_VERT, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &sprite_pos_vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, sprite_pos_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_positions), sprite_positions,
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(VA_IDX_SPRITE_POS, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &sprite_size_vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, sprite_size_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_sizes), sprite_sizes,
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(VA_IDX_SPRITE_SIZE, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &sprite_rot_vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, sprite_rot_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_angles), sprite_angles,
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(VA_IDX_SPRITE_ROT, 1, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &sheet_offset_vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, sheet_offset_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sheet_offsets), sheet_offsets,
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(VA_IDX_SHEET_OFFSET, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glGenBuffers(1, &sprite_origin_vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, sprite_origin_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_origins), sprite_origins,
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(VA_IDX_SPRITE_ORIGIN, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
-    glVertexAttribDivisor(VA_IDX_SPRITE_POS, 1);
-    glVertexAttribDivisor(VA_IDX_SPRITE_SIZE, 1);
-    glVertexAttribDivisor(VA_IDX_SPRITE_ROT, 1);
-    glVertexAttribDivisor(VA_IDX_SHEET_OFFSET, 1);
-    glVertexAttribDivisor(VA_IDX_SPRITE_ORIGIN, 1);
-
-    glEnableVertexAttribArray(VA_IDX_QUAD_VERT);
-    glEnableVertexAttribArray(VA_IDX_SPRITE_POS);
-    glEnableVertexAttribArray(VA_IDX_SPRITE_SIZE);
-    glEnableVertexAttribArray(VA_IDX_SPRITE_ROT);
-    glEnableVertexAttribArray(VA_IDX_SHEET_OFFSET);
-    glEnableVertexAttribArray(VA_IDX_SPRITE_ORIGIN);
+    err = glsprite_renderer_init(&renderer, prog_id);
+    assert(err == 0);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glUseProgram(prog_id);
-    glUniform2f(screen_size_uniform_loc, 640, 480);
-    glUniform2f(sheet_size_uniform_loc, sprite_sheet_w, sprite_sheet_h);
+    glUniform2f(renderer.screen_size_uniform_loc, 640, 480);
+    glUniform2f(renderer.sheet_size_uniform_loc, sprite_sheet_w,
+                sprite_sheet_h);
 
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
