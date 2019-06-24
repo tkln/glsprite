@@ -31,39 +31,57 @@ struct vec2 {
     float x, y;
 };
 
-static const struct vec2 sprite_positions[] = {
+struct glsprite_draw_buffer {
+    size_t num_sprites;
+    struct vec2 *sheet_offsets;
+    struct vec2 *sprite_positions;
+    struct vec2 *sprite_dimensions;
+    struct vec2 *sprite_origins;
+    float *sprite_angles;
+};
+
+static struct vec2 sprite_positions[] = {
     { 100, 100 },
     { 500, 300 },
     { 300, 400 },
     { 200, 200 },
 };
 
-static const struct vec2 sprite_sizes[] = {
+static struct vec2 sprite_sizes[] = {
     { 21, 21 },
     { 21, 21 },
     { 21, 21 },
     { 21, 21 },
 };
 
-static const float sprite_angles[] = {
+static float sprite_angles[] = {
     0.1f,
     0.0f,
     DEG2RAD(15.0f),
     DEG2RAD(45.0f),
 };
 
-static const struct vec2 sheet_offsets[] = {
+static struct vec2 sheet_offsets[] = {
     { 2, 2 },
     { 25, 48 },
     { 2, 2 },
     { 2, 2 },
 };
 
-static const struct vec2 sprite_origins[] = {
+static struct vec2 sprite_origins[] = {
     { 10, 10 },
     { 10, 10 },
     { 10, 10 },
     { 10, 10 },
+};
+
+static struct glsprite_draw_buffer draw_buffer = {
+    .num_sprites = 4,
+    .sheet_offsets = sheet_offsets,
+    .sprite_positions = sprite_positions,
+    .sprite_dimensions = sprite_sizes,
+    .sprite_origins = sprite_origins,
+    .sprite_angles = sprite_angles,
 };
 
 enum {
@@ -88,6 +106,36 @@ struct glsprite_renderer {
     GLint sheet_size_uniform_loc;
 };
 
+void glsprite_render_draw_buffer(const struct glsprite_renderer *rend,
+                                 const struct glsprite_draw_buffer *buf)
+{
+    size_t n = buf->num_sprites;
+
+    glBindVertexArray(rend->vao_id);
+
+    glBindBuffer(GL_ARRAY_BUFFER, rend->sprite_pos_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, n * sizeof(buf->sprite_positions[0]),
+                 sprite_positions, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, rend->sprite_size_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, n * sizeof(buf->sprite_dimensions[0]),
+                 buf->sprite_dimensions, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, rend->sprite_rot_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, n * sizeof(buf->sprite_angles[0]),
+                 buf->sprite_angles, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, rend->sheet_offset_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, n * sizeof(buf->sheet_offsets[0]),
+                 buf->sheet_offsets, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, rend->sprite_origin_vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, n * sizeof(buf->sprite_origins[0]),
+                 buf->sprite_origins, GL_DYNAMIC_DRAW);
+
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, ARRAY_LEN(quad_verts), n);
+}
+
 int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id)
 {
     r->screen_size_uniform_loc = glGetUniformLocation(prog_id, "screen_size");
@@ -109,32 +157,22 @@ int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id)
 
     glGenBuffers(1, &r->sprite_pos_vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, r->sprite_pos_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_positions), sprite_positions,
-                 GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SPRITE_POS, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glGenBuffers(1, &r->sprite_size_vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, r->sprite_size_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_sizes), sprite_sizes,
-                 GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SPRITE_SIZE, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glGenBuffers(1, &r->sprite_rot_vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, r->sprite_rot_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_angles), sprite_angles,
-                 GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SPRITE_ROT, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
     glGenBuffers(1, &r->sheet_offset_vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, r->sheet_offset_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sheet_offsets), sheet_offsets,
-                 GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SHEET_OFFSET, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glGenBuffers(1, &r->sprite_origin_vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, r->sprite_origin_vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_origins), sprite_origins,
-                 GL_STATIC_DRAW);
     glVertexAttribPointer(VA_IDX_SPRITE_ORIGIN, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glVertexAttribDivisor(VA_IDX_QUAD_VERT, 0);
@@ -221,8 +259,7 @@ int main(void)
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, ARRAY_LEN(quad_verts),
-                              ARRAY_LEN(sprite_positions));
+        glsprite_render_draw_buffer(&renderer, &draw_buffer);
 
         SDL_GL_SwapWindow(win);
         SDL_Delay(16);
