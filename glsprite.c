@@ -85,6 +85,53 @@ int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id,
     return 0;
 }
 
+void glsprite_draw_buffer_init(struct glsprite_draw_buffer *buf,
+                               const struct glsprite_sheet *sheet)
+{
+    buf->sheet = sheet;
+    buf->num_sprites = 0;
+    buf->num_allocd = 0;
+    buf->sheet_offsets = NULL;
+    buf->sprite_positions = NULL;
+    buf->sprite_dimensions = NULL;
+    buf->sprite_origins = NULL;
+    buf->sprite_angles = NULL;
+}
+
+void glsprite_draw_buffer_grow(struct glsprite_draw_buffer *buf)
+{
+    size_t n = buf->num_allocd;
+
+    if (n == 0)
+        buf->num_allocd = 1;
+
+    n = buf->num_allocd * 2;
+
+    buf->sheet_offsets = realloc(buf->sheet_offsets,
+                                 sizeof(buf->sheet_offsets[0]) * n);
+    buf->sprite_positions = realloc(buf->sprite_positions,
+                                    sizeof(buf->sprite_positions[0]) * n);
+    buf->sprite_dimensions = realloc(buf->sprite_dimensions,
+                                     sizeof(buf->sprite_dimensions[0]) * n);
+    buf->sprite_origins = realloc(buf->sprite_origins,
+                                  sizeof(buf->sprite_origins[0]) * n);
+    buf->sprite_angles = realloc(buf->sprite_angles,
+                                 sizeof(buf->sprite_angles[0]) * n);
+
+    buf->num_allocd = n;
+}
+
+void glsprite_draw_buffer_destroy(struct glsprite_draw_buffer *buf)
+{
+    buf->num_sprites = 0;
+    buf->num_allocd = 0;
+    free(buf->sheet_offsets);
+    free(buf->sprite_positions);
+    free(buf->sprite_dimensions);
+    free(buf->sprite_origins);
+    free(buf->sprite_angles);
+}
+
 void glsprite_render_draw_buffer(const struct glsprite_renderer *rend,
                                  const struct glsprite_draw_buffer *buf)
 {
