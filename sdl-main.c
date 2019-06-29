@@ -133,11 +133,16 @@ void glsprite_render_draw_buffer(const struct glsprite_renderer *rend,
     glBufferData(GL_ARRAY_BUFFER, n * sizeof(buf->sprite_origins[0]),
                  buf->sprite_origins, GL_DYNAMIC_DRAW);
 
+    glUseProgram(rend->prog_id);
+
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, ARRAY_LEN(quad_verts), n);
 }
 
 int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id)
 {
+    r->prog_id = prog_id;
+    glUseProgram(prog_id);
+
     r->screen_size_uniform_loc = glGetUniformLocation(prog_id, "screen_size");
     if (r->screen_size_uniform_loc < 0)
         return -1;
@@ -251,7 +256,6 @@ int main(void)
     assert(err == 0);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glUseProgram(prog_id);
     glUniform2f(renderer.screen_size_uniform_loc, 640, 480);
     glUniform2f(renderer.sheet_size_uniform_loc, sprite_sheet_w,
                 sprite_sheet_h);
