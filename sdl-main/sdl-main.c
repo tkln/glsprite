@@ -107,12 +107,6 @@ int main(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    sheet = (struct glsprite_sheet) {
-        .texture_id = sprite_sheet_tex_id,
-        .width = sprite_sheet_w,
-        .height = sprite_sheet_h,
-    };
-
     fs_id = glutil_compile_shader_file("../fs.glsl", GL_FRAGMENT_SHADER);
     assert(fs_id);
     vs_id = glutil_compile_shader_file("../vs.glsl", GL_VERTEX_SHADER);
@@ -122,6 +116,9 @@ int main(void)
 
     err = glsprite_renderer_init(&renderer, prog_id, 640, 480);
     assert(err == 0);
+
+    glsprite_sheet_init(&sheet, sprite_sheet_tex_id, sprite_sheet_w,
+                        sprite_sheet_h);
 
     glsprite_draw_buffer_init(&draw_buffer, &sheet);
 
