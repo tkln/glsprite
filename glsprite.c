@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Aapo Vienamo
+ * SPDX-License-Identifier: MIT
+ */
+
 #include <stdlib.h>
 
 #define GL_GLEXT_PROTOTYPES

@@ -1,3 +1,6 @@
+# Copyright (c) 2019 Aapo Vienamo
+# SPDX-License-Identifier: MIT
+
 LDFLAGS = -lSDL2 -lGL -lGLEW -lm
 CFLAGS = -Wall -g -O2
 

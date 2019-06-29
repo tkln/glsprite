@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Aapo Vienamo
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef GLSPRITE_H
 #define GLSPRITE_H
 
