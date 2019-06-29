@@ -92,6 +92,14 @@ int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id,
     return 0;
 }
 
+void glsprite_sheet_init(struct glsprite_sheet *sheet, GLuint texture_id,
+                         unsigned width, unsigned height)
+{
+    sheet->texture_id = texture_id;
+    sheet->width = width;
+    sheet->height = height;
+}
+
 void glsprite_draw_buffer_init(struct glsprite_draw_buffer *buf,
                                const struct glsprite_sheet *sheet)
 {

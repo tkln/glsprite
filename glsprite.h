@@ -43,6 +43,9 @@ struct glsprite_draw_buffer {
 int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id,
                            unsigned screen_w, unsigned screen_h);
 
+void glsprite_sheet_init(struct glsprite_sheet *sheet, GLuint texture_id,
+                         unsigned width, unsigned height);
+
 void glsprite_draw_buffer_init(struct glsprite_draw_buffer *buf,
                                const struct glsprite_sheet *sheet);
 
