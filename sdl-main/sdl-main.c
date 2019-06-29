@@ -13,7 +13,7 @@
 
 #include "glutil.h"
 #include "stb/stb_image.h"
-#include "glsprite.h"
+#include "../glsprite.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
@@ -113,9 +113,9 @@ int main(void)
         .height = sprite_sheet_h,
     };
 
-    fs_id = glutil_compile_shader_file("fs.glsl", GL_FRAGMENT_SHADER);
+    fs_id = glutil_compile_shader_file("../fs.glsl", GL_FRAGMENT_SHADER);
     assert(fs_id);
-    vs_id = glutil_compile_shader_file("vs.glsl", GL_VERTEX_SHADER);
+    vs_id = glutil_compile_shader_file("../vs.glsl", GL_VERTEX_SHADER);
     assert(vs_id);
     prog_id = glutil_link_shaders(glCreateProgram(), fs_id, vs_id);
     assert(prog_id);
