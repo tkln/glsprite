@@ -51,15 +51,6 @@ static struct vec2 sprite_origins[] = {
     { 10, 10 },
 };
 
-static struct glsprite_draw_buffer draw_buffer = {
-    .num_sprites = 4,
-    .sheet_offsets = sheet_offsets,
-    .sprite_positions = sprite_positions,
-    .sprite_dimensions = sprite_sizes,
-    .sprite_origins = sprite_origins,
-    .sprite_angles = sprite_angles,
-};
-
 int main(void)
 {
     SDL_Window *win;
@@ -69,10 +60,12 @@ int main(void)
 
     struct glsprite_renderer renderer;
     struct glsprite_sheet sheet;
+    struct glsprite_draw_buffer draw_buffer;
 
     int sprite_sheet_w, sprite_sheet_h, sprite_sheet_num_channels;
     unsigned char *sprite_sheet_data;
     int err;
+    int i;
 
     GLuint fs_id;
     GLuint vs_id;
@@ -125,14 +118,23 @@ int main(void)
     err = glsprite_renderer_init(&renderer, prog_id, 640, 480);
     assert(err == 0);
 
-    draw_buffer.sheet = &sheet;
+    glsprite_draw_buffer_init(&draw_buffer, &sheet);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        for (i = 0; i < 4; ++i)
+            glsprite_draw_buffer_push(&draw_buffer, sheet_offsets[i],
+                                      sprite_positions[i],
+                                      sprite_sizes[i],
+                                      sprite_origins[i],
+                                      sprite_angles[i]);
+
         glsprite_render_draw_buffer(&renderer, &draw_buffer);
+
+        glsprite_draw_buffer_clear(&draw_buffer);
 
         SDL_GL_SwapWindow(win);
         SDL_Delay(16);
@@ -142,6 +144,8 @@ int main(void)
                 running = 0;
         }
     }
+
+    glsprite_draw_buffer_destroy(&draw_buffer);
 
     SDL_GL_DeleteContext(gl_ctx);
     SDL_DestroyWindow(win);
