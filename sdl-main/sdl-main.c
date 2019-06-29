@@ -107,9 +107,9 @@ int main(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    fs_id = glutil_compile_shader_file("../fs.glsl", GL_FRAGMENT_SHADER);
+    fs_id = glutil_compile_shader_file("../shader/fs.glsl", GL_FRAGMENT_SHADER);
     assert(fs_id);
-    vs_id = glutil_compile_shader_file("../vs.glsl", GL_VERTEX_SHADER);
+    vs_id = glutil_compile_shader_file("../shader/vs.glsl", GL_VERTEX_SHADER);
     assert(vs_id);
     prog_id = glutil_link_shaders(glCreateProgram(), fs_id, vs_id);
     assert(prog_id);
