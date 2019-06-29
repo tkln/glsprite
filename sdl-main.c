@@ -138,7 +138,8 @@ void glsprite_render_draw_buffer(const struct glsprite_renderer *rend,
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, ARRAY_LEN(quad_verts), n);
 }
 
-int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id)
+int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id,
+                           unsigned screen_w, unsigned screen_h)
 {
     r->prog_id = prog_id;
     glUseProgram(prog_id);
@@ -150,6 +151,8 @@ int glsprite_renderer_init(struct glsprite_renderer *r, GLuint prog_id)
     r->sheet_size_uniform_loc = glGetUniformLocation(prog_id, "sheet_size");
     if (r->sheet_size_uniform_loc < 0)
         return -1;
+
+    glUniform2f(r->screen_size_uniform_loc, screen_w, screen_h);
 
     glGenVertexArrays(1, &r->vao_id);
     glBindVertexArray(r->vao_id);
@@ -252,11 +255,10 @@ int main(void)
     prog_id = glutil_link_shaders(glCreateProgram(), fs_id, vs_id);
     assert(prog_id);
 
-    err = glsprite_renderer_init(&renderer, prog_id);
+    err = glsprite_renderer_init(&renderer, prog_id, 640, 480);
     assert(err == 0);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glUniform2f(renderer.screen_size_uniform_loc, 640, 480);
     glUniform2f(renderer.sheet_size_uniform_loc, sprite_sheet_w,
                 sprite_sheet_h);
 
