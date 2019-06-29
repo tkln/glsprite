@@ -21,18 +21,18 @@
 
 #define DEG2RAD(deg) (((deg) / 180.0f) * M_PI)
 
-static struct vec2 sprite_positions[] = {
-    { 100, 100 },
-    { 500, 300 },
-    { 300, 400 },
-    { 200, 200 },
+static struct vec2f sprite_positions[] = {
+    VECMAT_INIT(100, 100),
+    VECMAT_INIT(500, 300),
+    VECMAT_INIT(300, 400),
+    VECMAT_INIT(200, 200),
 };
 
-static struct vec2 sprite_sizes[] = {
-    { 21, 21 },
-    { 21, 21 },
-    { 21, 21 },
-    { 21, 21 },
+static struct vec2f sprite_sizes[] = {
+    VECMAT_INIT(21, 21),
+    VECMAT_INIT(21, 21),
+    VECMAT_INIT(21, 21),
+    VECMAT_INIT(21, 21),
 };
 
 static float sprite_angles[] = {
@@ -42,18 +42,18 @@ static float sprite_angles[] = {
     DEG2RAD(45.0f),
 };
 
-static struct vec2 sheet_offsets[] = {
-    { 2, 2 },
-    { 25, 48 },
-    { 2, 2 },
-    { 2, 2 },
+static struct vec2f sheet_offsets[] = {
+    VECMAT_INIT(2, 2),
+    VECMAT_INIT(25, 48),
+    VECMAT_INIT(2, 2),
+    VECMAT_INIT(2, 2),
 };
 
-static struct vec2 sprite_origins[] = {
-    { 10, 10 },
-    { 10, 10 },
-    { 10, 10 },
-    { 10, 10 },
+static struct vec2f sprite_origins[] = {
+    VECMAT_INIT(10, 10),
+    VECMAT_INIT(10, 10),
+    VECMAT_INIT(10, 10),
+    VECMAT_INIT(10, 10),
 };
 
 int main(void)

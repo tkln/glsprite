@@ -8,15 +8,17 @@
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 
+#include <vecmat/vec3f.h>
+
 #include "glsprite.h"
 
 #define ARRAY_LEN(a) (sizeof(a) / sizeof(a[0]))
 
-static const struct vec3 quad_verts[] = {
-    { -1.0f, -1.0f, 0.0f },
-    {  1.0f, -1.0f, 0.0f },
-    { -1.0f,  1.0f, 0.0f },
-    {  1.0f,  1.0f, 0.0f },
+static const struct vec3f quad_verts[] = {
+    VECMAT_INIT(-1.0f, -1.0f, 0.0f),
+    VECMAT_INIT( 1.0f, -1.0f, 0.0f),
+    VECMAT_INIT(-1.0f,  1.0f, 0.0f),
+    VECMAT_INIT( 1.0f,  1.0f, 0.0f),
 };
 
 enum {

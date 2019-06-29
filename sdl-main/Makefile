@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 LDFLAGS = -lSDL2 -lGL -lGLEW -lm
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -g -O2 -I..
 
 OBJS = sdl-main.o glutil.o stb_image.o ../glsprite.o
 

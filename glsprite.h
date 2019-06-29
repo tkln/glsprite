@@ -8,13 +8,7 @@
 
 #include <GL/gl.h>
 
-struct vec3 {
-    float x, y, z;
-};
-
-struct vec2 {
-    float x, y;
-};
+#include <vecmat/vec2f.h>
 
 struct glsprite_renderer {
     GLuint prog_id;
@@ -39,10 +33,10 @@ struct glsprite_draw_buffer {
     const struct glsprite_sheet *sheet;
     size_t num_sprites;
     size_t num_allocd;
-    struct vec2 *sheet_offsets;
-    struct vec2 *sprite_positions;
-    struct vec2 *sprite_dimensions;
-    struct vec2 *sprite_origins;
+    struct vec2f *sheet_offsets;
+    struct vec2f *sprite_positions;
+    struct vec2f *sprite_dimensions;
+    struct vec2f *sprite_origins;
     float *sprite_angles;
 };
 
@@ -55,10 +49,10 @@ void glsprite_draw_buffer_init(struct glsprite_draw_buffer *buf,
 void glsprite_draw_buffer_grow(struct glsprite_draw_buffer *buf);
 
 static inline void glsprite_draw_buffer_push(struct glsprite_draw_buffer *buf,
-                                             struct vec2 sheet_pos,
-                                             struct vec2 sprite_pos,
-                                             struct vec2 sprite_dim,
-                                             struct vec2 sprite_orig,
+                                             struct vec2f sheet_pos,
+                                             struct vec2f sprite_pos,
+                                             struct vec2f sprite_dim,
+                                             struct vec2f sprite_orig,
                                              float sprite_angle)
 {
     size_t i = buf->num_sprites;

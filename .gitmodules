@@ -1,3 +1,6 @@
 [submodule "stb"]
 	path = sdl-main/stb
 	url = https://github.com/nothings/stb
+[submodule "sdl-main/vecmat"]
+	path = vecmat
+	url = https://github.com/tkln/vecmat
