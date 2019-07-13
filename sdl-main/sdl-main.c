@@ -28,25 +28,11 @@ static struct vec2f sprite_positions[] = {
     VECMAT_INIT(200, 200),
 };
 
-static struct vec2f sprite_sizes[] = {
-    VECMAT_INIT(21, 21),
-    VECMAT_INIT(21, 21),
-    VECMAT_INIT(21, 21),
-    VECMAT_INIT(21, 21),
-};
-
 static float sprite_angles[] = {
     0.1f,
     0.0f,
     DEG2RAD(15.0f),
     DEG2RAD(45.0f),
-};
-
-static struct vec2f sheet_offsets[] = {
-    VECMAT_INIT(2, 2),
-    VECMAT_INIT(25, 48),
-    VECMAT_INIT(2, 2),
-    VECMAT_INIT(2, 2),
 };
 
 static struct vec2f sprite_origins[] = {
@@ -65,6 +51,7 @@ int main(void)
 
     struct glsprite_renderer renderer;
     struct glsprite_sheet sheet;
+    struct glsprite_grid grid;
     struct glsprite_draw_buffer draw_buffer;
 
     int sprite_sheet_w, sprite_sheet_h, sprite_sheet_num_channels;
@@ -120,20 +107,19 @@ int main(void)
 
     glsprite_sheet_init(&sheet, sprite_sheet_tex_id, sprite_sheet_w,
                         sprite_sheet_h);
+    glsprite_grid_init(&grid, 21, 21, 2);
 
     glsprite_draw_buffer_init(&draw_buffer, &sheet);
-
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for (i = 0; i < 4; ++i)
-            glsprite_draw_buffer_push(&draw_buffer, sheet_offsets[i],
-                                      sprite_positions[i],
-                                      sprite_sizes[i],
-                                      sprite_origins[i],
-                                      sprite_angles[i]);
+            glsprite_draw_buffer_push_grid(&draw_buffer, &grid,
+                                          vec2i_init(i, i + i),
+                                          sprite_positions[i],
+                                          sprite_origins[i],
+                                          sprite_angles[i]);
 
         glsprite_render_draw_buffer(&renderer, &draw_buffer);
 
