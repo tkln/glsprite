@@ -75,6 +75,7 @@ int main(void)
     GLuint fs_id;
     GLuint vs_id;
     GLuint prog_id;
+    GLuint sprite_sheet_tex_id;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -93,11 +94,11 @@ int main(void)
 
     SDL_GL_SetSwapInterval(1);
 
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
     sprite_sheet_data = stbi_load("spritesheet.png", &sprite_sheet_w,
                                   &sprite_sheet_h, &sprite_sheet_num_channels,
                                   0);
-
-    GLuint sprite_sheet_tex_id;
 
     glGenTextures(1, &sprite_sheet_tex_id);
     glBindTexture(GL_TEXTURE_2D, sprite_sheet_tex_id);
