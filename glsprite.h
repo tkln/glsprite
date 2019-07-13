@@ -8,6 +8,7 @@
 
 #include <GL/gl.h>
 
+#include <vecmat/vec2i.h>
 #include <vecmat/vec2f.h>
 
 struct glsprite_renderer {
@@ -29,6 +30,12 @@ struct glsprite_sheet {
     GLuint texture_id;
 };
 
+struct glsprite_grid {
+    struct vec2f sprite_dims;
+    struct vec2f grid_dims;
+    float margin;
+};
+
 struct glsprite_draw_buffer {
     const struct glsprite_sheet *sheet;
     size_t num_sprites;
@@ -48,6 +55,9 @@ void glsprite_sheet_init(struct glsprite_sheet *sheet, GLuint texture_id,
 
 void glsprite_draw_buffer_init(struct glsprite_draw_buffer *buf,
                                const struct glsprite_sheet *sheet);
+
+void glsprite_grid_init(struct glsprite_grid *grid, unsigned sprite_width,
+                        unsigned sprite_height, unsigned margin);
 
 void glsprite_draw_buffer_grow(struct glsprite_draw_buffer *buf);
 
@@ -71,6 +81,13 @@ static inline void glsprite_draw_buffer_push(struct glsprite_draw_buffer *buf,
 
     buf->num_sprites = i + 1;
 }
+
+void glsprite_draw_buffer_push_grid(struct glsprite_draw_buffer *buf,
+                                    const struct glsprite_grid *grid,
+                                    struct vec2i sprite_idx,
+                                    struct vec2f sprite_pos,
+                                    struct vec2f sprite_orig,
+                                    float sprite_angle);
 
 void glsprite_render_draw_buffer(const struct glsprite_renderer *rend,
                                  const struct glsprite_draw_buffer *buf);

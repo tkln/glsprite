@@ -100,6 +100,14 @@ void glsprite_sheet_init(struct glsprite_sheet *sheet, GLuint texture_id,
     sheet->height = height;
 }
 
+void glsprite_grid_init(struct glsprite_grid *grid, unsigned sprite_width,
+                        unsigned sprite_height, unsigned margin)
+{
+    grid->sprite_dims = vec2f_init(sprite_width, sprite_height);
+    grid->grid_dims = vec2f_adds(grid->sprite_dims, margin);
+    grid->margin = margin;
+}
+
 void glsprite_draw_buffer_init(struct glsprite_draw_buffer *buf,
                                const struct glsprite_sheet *sheet)
 {
@@ -134,6 +142,20 @@ void glsprite_draw_buffer_grow(struct glsprite_draw_buffer *buf)
                                  sizeof(buf->sprite_angles[0]) * n);
 
     buf->num_allocd = n;
+}
+
+void glsprite_draw_buffer_push_grid(struct glsprite_draw_buffer *buf,
+                                    const struct glsprite_grid *grid,
+                                    struct vec2i sprite_idx,
+                                    struct vec2f sprite_pos,
+                                    struct vec2f sprite_orig,
+                                    float sprite_angle)
+{
+    struct vec2f idx = vec2f_init(sprite_idx.x, sprite_idx.y);
+    struct vec2f sheet_pos = vec2f_adds(vec2f_mul(idx, grid->grid_dims),
+                                        grid->margin);
+    glsprite_draw_buffer_push(buf, sheet_pos, sprite_pos, grid->sprite_dims,
+                              sprite_orig, sprite_angle);
 }
 
 void glsprite_draw_buffer_destroy(struct glsprite_draw_buffer *buf)
