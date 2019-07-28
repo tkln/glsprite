@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 LDLIBS = -lSDL2 -lGL -lGLEW -lm
-CFLAGS = -Wall -g -O2 -I..
+CFLAGS = -Wall -g -O2 -I.. -I../vecmat/include/
 
 OBJS = sdl-main.o glutil.o stb_image.o ../glsprite.o
 
