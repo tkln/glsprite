@@ -22,10 +22,10 @@
 #define DEG2RAD(deg) (((deg) / 180.0f) * M_PI)
 
 static struct vec2f sprite_positions[] = {
-    VECMAT_INIT(100, 100),
-    VECMAT_INIT(500, 300),
-    VECMAT_INIT(300, 400),
-    VECMAT_INIT(200, 200),
+    VEC2F_INIT(100, 100),
+    VEC2F_INIT(500, 300),
+    VEC2F_INIT(300, 400),
+    VEC2F_INIT(200, 200),
 };
 
 static float sprite_angles[] = {
@@ -36,10 +36,10 @@ static float sprite_angles[] = {
 };
 
 static struct vec2f sprite_origins[] = {
-    VECMAT_INIT(10, 10),
-    VECMAT_INIT(10, 10),
-    VECMAT_INIT(10, 10),
-    VECMAT_INIT(10, 10),
+    VEC2F_INIT(10, 10),
+    VEC2F_INIT(10, 10),
+    VEC2F_INIT(10, 10),
+    VEC2F_INIT(10, 10),
 };
 
 int main(void)

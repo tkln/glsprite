@@ -15,10 +15,10 @@
 #define ARRAY_LEN(a) (sizeof(a) / sizeof(a[0]))
 
 static const struct vec3f quad_verts[] = {
-    VECMAT_INIT(-1.0f, -1.0f, 0.0f),
-    VECMAT_INIT( 1.0f, -1.0f, 0.0f),
-    VECMAT_INIT(-1.0f,  1.0f, 0.0f),
-    VECMAT_INIT( 1.0f,  1.0f, 0.0f),
+    VEC3F_INIT(-1.0f, -1.0f, 0.0f),
+    VEC3F_INIT( 1.0f, -1.0f, 0.0f),
+    VEC3F_INIT(-1.0f,  1.0f, 0.0f),
+    VEC3F_INIT( 1.0f,  1.0f, 0.0f),
 };
 
 enum {
