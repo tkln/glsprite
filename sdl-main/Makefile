@@ -3,11 +3,16 @@
 
 LDLIBS = -lSDL2 -lGL -lGLEW -lm
 CFLAGS = -Wall -g -O2 -I.. -I../vecmat/include/
+CXXFLAGS = $(CFLAGS)
 
-OBJS = sdl-main.o glutil.o stb_image.o ../glsprite.o
+OBJS = glutil.o stb_image.o ../glsprite.o
 
-sdl-main: $(OBJS)
+.PHONY: default
+default: sdl-main sdl-mainpp
+
+sdl-main: sdl-main.o $(OBJS)
+sdl-mainpp: sdl-mainpp.o $(OBJS)
 
 .PHONY: clean
 clean:
-	rm -f sdl-main $(OBJS)
+	rm -f sdl-main sdl-mainpp sdl-main.o sdl-mainpp.o $(OBJS)
