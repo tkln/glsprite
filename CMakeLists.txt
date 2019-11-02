@@ -1,3 +1,5 @@
+add_subdirectory(vecmat)
+
 add_library(
         glsprite
     STATIC
