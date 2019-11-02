@@ -6,7 +6,11 @@
 #ifndef GLSPRITE_H
 #define GLSPRITE_H
 
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include <vecmat/vec2i.h>
 #include <vecmat/vec2f.h>

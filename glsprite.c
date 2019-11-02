@@ -6,7 +6,11 @@
 #include <stdlib.h>
 
 #define GL_GLEXT_PROTOTYPES
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include <vecmat/vec3f.h>
 

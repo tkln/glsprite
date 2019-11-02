@@ -7,8 +7,13 @@
 #include <fcntl.h>
 
 #define GL_GLEXT_PROTOTYPES
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
+#else
 #include <GL/gl.h>
 #include <GL/glext.h>
+#endif
 
 #include "glutil.h"
 

@@ -1,7 +1,11 @@
 #ifndef GLUTIL_H
 #define GLUTIL_H
 
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #if __cplusplus
 extern "C" {
