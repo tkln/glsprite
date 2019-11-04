@@ -208,3 +208,14 @@ void glsprite_render_draw_buffer(const struct glsprite_renderer *rend,
 
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, ARRAY_LEN(quad_verts), n);
 }
+
+void glsprite_renderer_destroy(struct glsprite_renderer *renderer)
+{
+    glDeleteBuffers(1, &renderer->sprite_origin_vbo_id);
+    glDeleteBuffers(1, &renderer->sheet_offset_vbo_id);
+    glDeleteBuffers(1, &renderer->sprite_rot_vbo_id);
+    glDeleteBuffers(1, &renderer->sprite_size_vbo_id);
+    glDeleteBuffers(1, &renderer->sprite_pos_vbo_id);
+    glDeleteBuffers(1, &renderer->quad_verts_vbo_id);
+    glDeleteVertexArrays(1, &renderer->vao_id);
+}

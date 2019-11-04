@@ -102,5 +102,6 @@ static inline void glsprite_draw_buffer_clear(struct glsprite_draw_buffer *buf)
 }
 
 void glsprite_draw_buffer_destroy(struct glsprite_draw_buffer *buf);
+void glsprite_renderer_destroy(struct glsprite_renderer *renderer);
 
 #endif
