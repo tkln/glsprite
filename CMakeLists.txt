@@ -1,5 +1,12 @@
 add_subdirectory(vecmat)
 
+if(DEFINED glsprite_GLEXT_HEADER)
+    target_compile_definitions(glsprite PRIVATE
+        GLSPRITE_GLEXT_HEADER=${glsprite_GLEXT_HEADER})
+    target_compile_definitions(glsprite PRIVATE
+        GLSPRITE_GLEXT_HEADER=${glsprite_GLEXT_HEADER})
+endif()
+
 add_library(
         glsprite
     STATIC
