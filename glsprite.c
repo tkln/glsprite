@@ -12,6 +12,10 @@
 #include <GL/gl.h>
 #endif
 
+#ifdef GLSPRITE_GLEXT_HEADER
+#include GLSPRITE_GLEXT_HEADER
+#endif
+
 #include <vecmat/vec3f.h>
 
 #include "glsprite.h"
